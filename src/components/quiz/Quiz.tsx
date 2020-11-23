@@ -14,8 +14,11 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'black',
         color: 'white'
     },
-    paper : {
-        height : theme.spacing(10)
+    paper: {
+        height: theme.spacing(10),
+        '&:hover': {
+            backgroundColor: 'pink'
+        }
     }
 }))
 const Quiz = (props: any) => {
@@ -26,12 +29,16 @@ const Quiz = (props: any) => {
         <>
             {data.length > 0 ?
                 data.map((a: any) => {
-                    console.log(a.date);
                     return (
-                        <Paper className={classes.paper} elevation={3}>
-                            {a.title} <br />
-                            {moment(a.date.toDate()).fromNow()}
-                        </Paper>
+                        <Link to={`/quiz/${a.idx}`} style={{textDecoration : 'none'}}>
+                            <Paper
+                                className={classes.paper}
+                                elevation={3}
+                            >
+                                {a.title} <br />
+                                {moment(a.date.toDate()).fromNow()}
+                            </Paper>
+                        </Link>
                     )
                 })
                 :

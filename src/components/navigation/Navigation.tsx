@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import CategoryIcon from '@material-ui/icons/Category';
 import TextsmsOutlinedIcon from '@material-ui/icons/TextsmsOutlined';
+import PermIdentityIcon from '@material-ui/icons/PermIdentity';
 
 const useStyles = makeStyles({
     root: {
@@ -52,9 +53,9 @@ const Navigation = () => {
                     />
                     <Tab
                         component={Link}
-                        to="/complete"
-                        icon={<SearchIcon />}
-                        label="Complete"
+                        to="/info"
+                        icon={<PermIdentityIcon />}
+                        label="Info"
                     />
                 </Tabs>
             </Paper>
