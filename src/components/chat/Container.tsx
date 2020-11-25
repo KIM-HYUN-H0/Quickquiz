@@ -7,23 +7,21 @@ const Container = (props: any) => {
 
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState('');
-
-    // useEffect(() => {
-    //     db.collection('chat').doc(props.match.params.id)
-    //         .collection('messages')
-    //         .orderBy('write_time', 'desc')
-    //         .get()
-    //         .then((docs: any) => {
-    //             let temp: any = [];
-    //             docs.forEach((doc: any) => {
-    //                 temp.push({ id: doc.id, data: doc.data() });
-    //             })
-    //             setMessages(temp);
-    //         })
-
-    // }, [])
+    const [nick, setNick] = useState('');
 
     useEffect(() => {
+        auth.onAuthStateChanged((user:any) => {
+            if(user) {
+                setNick(user.displayName);
+                loadMessages();
+            }
+            else {
+                alert('로그인 ㄱㄱ');
+            }
+        })
+    }, [])
+
+    const loadMessages = () => {
         db.collection('chat')
         .doc(props.match.params.id)
         .collection('messages')
@@ -34,14 +32,15 @@ const Container = (props: any) => {
                 }
             })
         })
-    }, [])
+    }
 
     const sendText = () => {
-        db.collection('chat').doc(props.match.params.id)
+        if(nick !== '') {
+            db.collection('chat').doc(props.match.params.id)
             .collection('messages')
             .add({
                 content: inputText,
-                writer: 'default',
+                writer: nick,
                 write_time: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then((result: any) => {
@@ -50,6 +49,8 @@ const Container = (props: any) => {
             .catch((err: any) => {
                 console.error(err);
             })
+        }
+        
     }
 
     const keyPress = (e: any) => {
