@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../../config';
 import ChatList from './ChatList';
+import { RootState } from '../../modules';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Container = () => {
 
     const [list, setList] = useState([]);
+    const uid = useSelector((state:RootState) => state.userControl.uid)
+
     useEffect(() => {
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                db.collection('chat').where('join', 'array-contains', user.uid)
+            if (uid) {
+                db.collection('chat').where('join', 'array-contains', uid)
                     .get()
                     .then((docs: any) => {
                         let temp: any = [];
@@ -21,7 +24,6 @@ const Container = () => {
             else {
                 console.log('뿌려주지않ㄴ는다')
             }
-        })
     }, [])
 
     return (

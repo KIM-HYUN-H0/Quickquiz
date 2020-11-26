@@ -2,19 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { auth } from '../../config';
 import Info from './Info';
 import { Link } from "react-router-dom";
+import { loadNick } from '../../modules/userControl';
+import { RootState } from '../../modules';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Container = (props:any) => {
 
-    const [userCheck, setUserCheck] = useState(0);
+    const nickname = useSelector((state:RootState) => state.userControl.nickname)
+    const dispatch = useDispatch();
+
     useEffect(() => {
         auth.onAuthStateChanged(user => {
             if (user) {
-                setUserCheck(1);
-                console.log(user)
+                dispatch(loadNick(user.displayName!,user.uid))
             }
             else {
-                
-                setUserCheck(0);
+                dispatch(loadNick('', ''))
             }
         })
     }, [])
@@ -22,13 +25,14 @@ const Container = (props:any) => {
     const logout = () => {
         console.log('로그아웃')
         auth.signOut().then(() => {
+            dispatch(loadNick('', ''))
             props.history.push('/info')
         })
     }
 
     return (
         <>
-            {userCheck === 0 ?
+            {nickname === '' ?
             <div>
                 <Link to="/login" >로그인하러가기</Link>
                 <Link to="/signup" >회원가입하러가기</Link>

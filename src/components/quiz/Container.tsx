@@ -7,7 +7,9 @@ const Container = () => {
 
 
     useEffect(() => {
-        db.collection('quiz').get()
+        db.collection('quiz')
+        .orderBy('date', 'desc')
+        .get()
             .then((docs: any) => {
                 let temp: any = [];
                 docs.forEach((doc: any) => {

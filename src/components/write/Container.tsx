@@ -2,15 +2,15 @@ import React, { useEffect, useState, createRef } from 'react';
 import { db, dbs } from '../../config'
 import Write from './Write';
 import firebase from 'firebase';
+import { RootState } from '../../modules';
+import { useSelector } from 'react-redux';
 
 const Container = (props: any) => {
 
     const content: any = createRef();
     const [title, setTitle] = useState('');
-    const [needs, setNeeds] = useState('');
-    const [sauce, setSauce] = useState('');
-    const [category, selectCategory] = useState('');
-    const [source, setSource] = useState('');
+
+    const nickname = useSelector((state: RootState) => state.userControl.nickname)
 
     const uuidv4 = () => {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -42,7 +42,7 @@ const Container = (props: any) => {
             })
             .then(() => {
                 const setData = {
-                    author: 'default',
+                    author: nickname,
                     title: title,
                     content: content_true,
                     idx: idx,
