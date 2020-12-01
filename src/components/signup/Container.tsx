@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Signup from './Signup';
 import { db, auth } from '../../config';
 import firebase from 'firebase';
+import axios from 'axios';
 
 const Container = (props:any) => {
 
@@ -29,26 +30,18 @@ const Container = (props:any) => {
         }
     }
     const doRegister = () => {
-        auth.createUserWithEmailAndPassword(email, pw)
-            .then((result) => {
+        axios.post('http://localhost:4000/users/signup', {
+            userid : email,
+            password : pw
+        })
+        .then((result:any) => {
+            console.log(result);
+            //props.history.push('/info');
 
-                db.collection('users').doc(result.user!.uid).set({
-                    signUpDate : firebase.firestore.FieldValue.serverTimestamp(),
-                    displayName : nickname
-                })
-                props.history.push('/info');
-                
-                return result.user?.updateProfile({
-                    displayName : nickname
-                })
-                
-                
-            })
-            .catch(err => {
-                const errCode = err.code;
-                const errMessage = err.message;
-                console.log(errCode, errMessage);
-            })
+        })
+        .catch((err:any) => {
+            console.error(err);
+        })
     }
 
     return(

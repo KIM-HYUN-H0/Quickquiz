@@ -4,6 +4,7 @@ import Write from './Write';
 import firebase from 'firebase';
 import { RootState } from '../../modules';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 const Container = (props: any) => {
 
@@ -34,59 +35,19 @@ const Container = (props: any) => {
 
     const setQuiz = () => {
         const content_true = content.current.getInstance().getHtml();
-        let idx = 0;
-        db.collection('autoIncrement').doc('quiz')
-            .get()
-            .then((doc: any) => {
-                idx = doc.data().idx;
-            })
-            .then(() => {
-                const setData = {
-                    author: nickname,
-                    title: title,
-                    content: content_true,
-                    idx: idx,
-                    date: firebase.firestore.FieldValue.serverTimestamp(),
-                }
-                db.collection('quiz').add(setData)
-                    .then((res) => {
-                        let words: any = [];
-                        setData.title.split(' ').map((word: any) => {
-                            for (let i = 0; i < word.length; i++) {
-                                for (let j = i + 1; j <= word.length; j++) {
-                                    if (words.findIndex((a: any) => a.title === word.slice(i, j)) === -1) {
-                                        words.push({ title: word.slice(i, j), idx: setData.idx })
-                                    }
-                                }
-                            }
-                        })
-                        words.map((word: any) => {
-                            db.collection('quiz_title_search').where('title', '==', word.title)
-                                .get()
-                                .then((result: any) => {
-                                    if (result.size > 0) {
-                                        result.forEach((b: any) => {
-                                            db.collection('quiz_title_search').doc(b.id)
-                                                .update({ idx: [...b.data().idx, word.idx] })
-                                        })
-                                    }
-                                    else {
-                                        db.collection('quiz_title_search')
-                                            .add({ title: word.title, idx: [word.idx] })
-                                    }
-                                })
-                        })
-                        props.history.push('/quiz');
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                    })
-            })
-            .then(() => {
-                db.collection('autoIncrement').doc('quiz')
-                    .update({ idx: firebase.firestore.FieldValue.increment(1) })
-            })
-        //idx 부른 후 저장 .
+
+        axios.post('http://localhost:4000/quiz/quizWrite', {
+            author : nickname,
+            title : title,
+            content : content_true,
+        })
+        .then((result:any) => {
+            console.log(result);
+            // props.history.push('/quiz');
+        })
+        .catch((err:any) => {
+            console.error(err);
+        })
     }
 
     return (
